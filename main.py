@@ -82,7 +82,7 @@ async def send_welcome_package(user, context: ContextTypes.DEFAULT_TYPE):
 (केवल प्रीमियम उपयोगकर्ताओं के लिए)💎
 (𝟏𝟎𝟎% नुकसान की भरपाई की गारंटी)🧬
 
-♻सहायता के लिए @HORNETLIVE
+♻सहायता के लिए @RAJPUT_P3
 🔴हैक का उपयोग कैसे करें
 https://t.me/rajaindiaprediction/54""",
                 )
@@ -99,7 +99,7 @@ https://t.me/rajaindiaprediction/54""",
                     caption="""🎙 सदस्य 9X गुना लाभ का प्रमाण 👇🏻
 https://t.me/rajaindiaprediction/56
 
-♻सहायता के लिए @HORNETLIVE
+♻सहायता के लिए @RAJPUT_P3
 लगातार नंबर पे नंबर जीतना 🤑♻👑""",
                 )
         except Exception as e:
@@ -292,3 +292,4 @@ def user_exists(user_id: int):
 
 if __name__ == "__main__":
     main()
+
