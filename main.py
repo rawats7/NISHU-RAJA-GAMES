@@ -12,6 +12,21 @@ from telegram.ext import (
 from telegram.ext import MessageHandler, filters
 from telegram.error import Forbidden, BadRequest, TimedOut, NetworkError
 
+from flask import Flask
+import threading
+
+app_web = Flask(__name__)
+
+@app_web.route("/")
+def home():
+    return "Bot is running!"
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    app_web.run(host="0.0.0.0", port=port)
+
+
+
 # ================= CONFIG =================
 BOT_TOKEN = "8514618354:AAFVRVtoJqua2mTG2q8Tv4jkg_v7x3lmwkw"
 ADMIN_ID = 7849592882
@@ -266,22 +281,21 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
 # ================= MAIN =================
 def main():
+
+    # start web server thread
+    threading.Thread(target=run_web).start()
+
     app = Application.builder().token(BOT_TOKEN).build()
 
-    # Commands first
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("broadcast", broadcast))
     app.add_handler(CommandHandler("users", users_count))
-
-    # Join request handler
     app.add_handler(ChatJoinRequestHandler(approve_and_send))
 
-    # Message handler LAST (very important)
     app.add_handler(
         MessageHandler(filters.ALL & ~filters.COMMAND, capture_user_message)
     )
 
-    # IMPORTANT: remove allowed_updates restriction
     app.run_polling()
 
 
@@ -292,5 +306,6 @@ def user_exists(user_id: int):
 
 if __name__ == "__main__":
     main()
+
 
 
