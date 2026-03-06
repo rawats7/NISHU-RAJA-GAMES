@@ -11,6 +11,23 @@ from telegram.ext import (
 )
 from telegram.ext import MessageHandler, filters
 from telegram.error import Forbidden, BadRequest, TimedOut, NetworkError
+from flask import Flask
+import threading
+
+app_web = Flask(__name__)
+
+@app_web.route("/")
+def home():
+    return "Bot is running!"
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    app_web.run(host="0.0.0.0", port=port)
+
+
+
+
+
 
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -271,33 +288,22 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
 
 def main():
+
+    # start web server thread (for Render)
+    threading.Thread(target=run_web).start()
+
     app = Application.builder().token(BOT_TOKEN).build()
 
-    # Handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("broadcast", broadcast))
     app.add_handler(CommandHandler("users", users_count))
     app.add_handler(ChatJoinRequestHandler(approve_and_send))
-    app.add_handler(
-        MessageHandler(filters.ALL & ~filters.COMMAND, capture_user_message)
-    )
-    # Set webhook
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=BOT_TOKEN,
-        webhook_url=f"{RENDER_URL}/{BOT_TOKEN}",
-    )
 
-
-
-    
-    # Message handler LAST (very important)
+    # message handler
     app.add_handler(
         MessageHandler(filters.ALL & ~filters.COMMAND, capture_user_message)
     )
 
-    # IMPORTANT: remove allowed_updates restriction
     app.run_polling()
 
 
@@ -308,6 +314,7 @@ def user_exists(user_id: int):
 
 if __name__ == "__main__":
     main()
+
 
 
 
